@@ -41,6 +41,14 @@ in their HTML browser. You may evolve ideas and gain a concomitant XML
 documentation of your brainstorming without having to concentrate on
 complicated structural syntaxes.
 
+%description -l pl
+coWiki to wyszukane, ale ³atwe w u¿yciu narzêdzie do pracy zespo³owej
+przez WWW pomagaj±ce wspó³pracownikom tworzyæ i organizowaæ dokumenty
+WWW, weblogi, bazy wiedzy lub dowolne inne struktury dokumentów
+bezpo¶rednio w przegl±darce HTML. Mo¿na rozwijaæ idee i otrzymywaæ
+towarzysz±c± dokumentacjê XML burzy mózgów bez potrzeby koncentrowania
+siê na skomplikowanej sk³adni strukturalnej.
+
 %prep
 %setup -q %{?_snap:-n %{name}-%{version}-dev-%{_snap}}
 %patch0 -p1
