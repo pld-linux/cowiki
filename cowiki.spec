@@ -9,7 +9,7 @@
 %else
 %define _source http://cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 0.17
+%define _rel 0.20
 
 Summary:	Web collaboration tool
 Name:		cowiki
@@ -51,16 +51,18 @@ mv htdocs/.htaccess .
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir}}
+install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir},/var/lib/%{name}}
 
 cp -a htdocs includes $RPM_BUILD_ROOT%{_appdir}
 
 sed -e '
-    s/CHECK_INTERVAL = .*/CHECK_INTERVAL = "-1"/
-    s/RETURN_PATH = .*/RETURN_PATH = "your.bounce.email@localhost"/
-    s/ABUSE_PATH = .*/ABUSE_PATH = "abuse@localhost"/
-    s/ROOT_PASSWD = .*/ROOT_PASSWD = "XXX"/
-    s/LOOKUP_DNS = .*/LOOKUP_DNS = off/
+    s,CHECK_INTERVAL = .*,CHECK_INTERVAL = "-1",
+    s,RETURN_PATH = .*,RETURN_PATH = "your.bounce.email@localhost",
+    s,ABUSE_PATH = .*,ABUSE_PATH = "abuse@localhost",
+    s,ROOT_PASSWD = .*,ROOT_PASSWD = "XXX",
+    s,LOOKUP_DNS = .*,LOOKUP_DNS = off,
+    s,TEMP = .*,TEMP = "/var/lib/%{name}/",
+
 ' core.conf-dist > $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 echo -e '\n; vim: ft=dosini' >> $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 
@@ -101,8 +103,9 @@ fi
 
 if [ "$1" = 1 ]; then
 %banner %{name} -e <<EOF
-Install the database using the appropriate "misc/database/*.sql" schema
-Configure the coWiki in %{_sysconfdir}/core.conf
+Install the database using the appropriate "misc/database/*.sql" schema.
+You must setup authorization and root password in:
+- %{_sysconfdir}/core.conf
 
 EOF
 fi
@@ -123,6 +126,10 @@ if [ "$1" = "0" ]; then
 			/etc/rc.d/init.d/httpd restart 1>&2
 		fi
 	fi
+
+	# nuke cache
+	# FIXME could suffer too many arguments error
+	rm -f /var/lib/%{name}/*
 fi
 
 %files
@@ -134,3 +141,4 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
 %{_appdir}
+%dir %attr(770,root,http) /var/lib/%{name}
