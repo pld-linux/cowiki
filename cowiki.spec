@@ -1,16 +1,26 @@
 # TODO
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
+
+# snapshot: DATE
+%define _snap 2005-02-20
+
+%if 0%{?_snap}
+%define _source http://snaps.cowiki.org/%{name}-%{version}-dev-%{_snap}.tar.gz
+%else
+%define _source http://cowiki.org/download/%{name}-%{version}.tar.gz
+%endif
+%define _rel 0.17
+
 Summary:	Web collaboration tool
 Name:		cowiki
-Version:	0.3.3
-Release:	0.14
+Version:	0.3.4
+Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
 Epoch:		0
 License:	GPL
 Group:		Applications/WWW
-Source0:	http://cowiki.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	91f995347ed5791f052285124223b87b
+Source0:	%{_source}
+# Source0-md5:	6351667cdfbf3b6e8937af855a4414ba
 Patch0:		%{name}-FHS.patch
-Patch1:		%{name}-class-case.patch
 URL:		http://cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.177
 Requires:	php >= 5.0.2
@@ -32,9 +42,8 @@ documentation of your brainstorming without having to concentrate on
 complicated structural syntaxes.
 
 %prep
-%setup -q
+%setup -q %{?_snap:-n %{name}-%{version}-dev-%{_snap}}
 %patch0 -p1
-%patch1 -p1
 
 mv includes/cowiki/core.conf-dist .
 rm -f {htdocs,includes/cowiki}/.cvsignore
@@ -52,7 +61,8 @@ sed -e '
     s/ABUSE_PATH = .*/ABUSE_PATH = "abuse@localhost"/
     s/ROOT_PASSWD = .*/ROOT_PASSWD = "XXX"/
     s/LOOKUP_DNS = .*/LOOKUP_DNS = off/
-' core.conf-dist > $RPM_BUILD_ROOT%{_sysconfdir}/%{name}.ini
+' core.conf-dist > $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
+echo -e '\n; vim: ft=dosini' >> $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 
 # unfortunately cowiki works only as vhost root
 cat <<EOF >> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
@@ -92,7 +102,7 @@ fi
 if [ "$1" = 1 ]; then
 %banner %{name} -e <<EOF
 Install the database using the appropriate "misc/database/*.sql" schema
-Configure the coWiki in %{_sysconfdir}/%{name}.ini
+Configure the coWiki in %{_sysconfdir}/core.conf
 
 EOF
 fi
@@ -117,10 +127,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog INSTALL NEWS 
+%doc ChangeLog INSTALL* NEWS 
 %doc README.IDIOM README.PLUGIN SKEL.PLUGIN
 %doc misc/database
 %dir %{_sysconfdir}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
-%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}.ini
+%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
 %{_appdir}
