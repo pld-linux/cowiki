@@ -2,14 +2,14 @@
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
 # snapshot: DATE
-%define _snap 2005-02-20
+#define _snap 2005-02-20
 
 %if 0%{?_snap}
 %define _source http://snaps.cowiki.org/%{name}-%{version}-dev-%{_snap}.tar.gz
 %else
-%define _source http://cowiki.org/download/%{name}-%{version}.tar.gz
+%define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 0.20
+%define _rel 1
 
 Summary:	Web collaboration tool
 Name:		cowiki
@@ -19,7 +19,7 @@ Epoch:		0
 License:	GPL
 Group:		Applications/WWW
 Source0:	%{_source}
-# Source0-md5:	6351667cdfbf3b6e8937af855a4414ba
+# Source0-md5:	33d0b6506e39846666434cc3ba2f95bd
 Patch0:		%{name}-FHS.patch
 URL:		http://cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.177
