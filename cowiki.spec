@@ -12,7 +12,7 @@
 %define _rel 1
 
 Summary:	Web collaboration tool
-Summary(pl):	Narzêdzie do wspó³pracy i wspo³tworzenia w sieci.
+Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
 Version:	0.3.4
 Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
