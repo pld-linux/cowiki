@@ -1,0 +1,11 @@
+--- ./includes/cowiki/class/core/class.Registry.php~	2005-02-20 23:51:58.000000000 +0200
++++ ./includes/cowiki/class/core/class.Registry.php	2005-02-20 23:53:06.000000000 +0200
+@@ -74,7 +74,7 @@
+         $Context = RuntimeContext::getInstance();
+ 
+         try {
+-            $sPath = realpath(getDirName(__FILE__).'../..') . '/core.conf';
++            $sPath = '/etc/cowiki/core.conf';
+ 
+             $Conf = new Config();
+             $aConf = $Conf->getIniConfigAsArray($sPath);
