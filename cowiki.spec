@@ -9,7 +9,7 @@
 %else
 %define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 4
+%define _rel 7
 
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
