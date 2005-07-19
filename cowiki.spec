@@ -9,7 +9,7 @@
 %else
 %define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 1
+%define _rel 2
 
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
@@ -23,7 +23,7 @@ Source0:	%{_source}
 # Source0-md5:	33d0b6506e39846666434cc3ba2f95bd
 Patch0:		%{name}-FHS.patch
 URL:		http://cowiki.org/
-BuildRequires:	rpmbuild(macros) >= 1.177
+BuildRequires:	rpmbuild(macros) >= 1.226
 Requires:	php >= 5.0.2
 Requires:	php-mysql
 Requires:	apache(mod_auth)
@@ -32,8 +32,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_appdir %{_datadir}/%{name}
 %define		_sysconfdir	/etc/%{name}
-%define		_apache1dir	/etc/apache
-%define		_apache2dir	/etc/httpd
 
 %description
 coWiki is a sophisticated but easy to use web collaboration tool that
@@ -95,22 +93,19 @@ EOF
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-# apache1
-if [ -d %{_apache1dir}/conf.d ]; then
-	ln -sf %{_sysconfdir}/apache.conf %{_apache1dir}/conf.d/99_%{name}.conf
-	if [ -f /var/lock/subsys/apache ]; then
-		/etc/rc.d/init.d/apache restart 1>&2
-	fi
-fi
-# apache2
-if [ -d %{_apache2dir}/httpd.conf ]; then
-	ln -sf %{_sysconfdir}/apache.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	fi
-fi
+%triggerin -- apache1 >= 1.3.33-2
+%apache_config_install -v 1 -c %{_sysconfdir}/apache.conf
 
+%triggerun -- apache1 >= 1.3.33-2
+%apache_config_uninstall -v 1
+
+%triggerin -- apache >= 2.0.0
+%apache_config_install -v 2 -c %{_sysconfdir}/apache.conf
+
+%triggerun -- apache >= 2.0.0
+%apache_config_uninstall -v 2
+
+%post
 if [ "$1" = 1 ]; then
 %banner %{name} -e <<EOF
 Install the database using the appropriate "misc/database/*.sql" schema.
@@ -122,21 +117,6 @@ fi
 
 %preun
 if [ "$1" = "0" ]; then
-	# apache1
-	if [ -f %{_apache1dir}/apache.conf ]; then
-		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
-		if [ -f /var/lock/subsys/apache ]; then
-			/etc/rc.d/init.d/apache restart 1>&2
-		fi
-	fi
-	# apache2
-	if [ -d %{_apache2dir}/httpd.conf ]; then
-		rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
-		if [ -f /var/lock/subsys/httpd ]; then
-			/etc/rc.d/init.d/httpd restart 1>&2
-		fi
-	fi
-
 	# nuke cache
 	# FIXME could suffer too many arguments error
 	rm -f /var/lib/%{name}/*
