@@ -25,7 +25,7 @@ Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
 URL:		http://cowiki.org/
-#BuildRequires:	rpmbuild(macros) >= 1.223
+BuildRequires:	rpmbuild(macros) >= 1.221
 Requires:	php >= 4:5.0.2
 Requires:	php-mysql
 Requires:	apache(mod_auth)
