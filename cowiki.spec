@@ -9,7 +9,7 @@
 %else
 %define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 0.2
+%define _rel 0.9
 
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
@@ -52,6 +52,22 @@ bezpo¶rednio w przegl±darce HTML. Mo¿na rozwijaæ idee i otrzymywaæ
 towarzysz±c± dokumentacjê XML burzy mózgów bez potrzeby koncentrowania
 siê na skomplikowanej sk³adni strukturalnej.
 
+%package setup
+Summary:	coWiki setup package
+Summary(pl):	Pakiet do wstêpnej konfiguracji coWiki
+Group:		Applications/WWW
+PreReq:		%{name} = %{epoch}:%{version}-%{release}
+
+%description setup
+Install this package to configure initial coWiki installation. You
+should uninstall this package when you're done, as it considered
+insecure to keep the setup files in place.
+
+%description setup -l pl
+Ten pakiet nale¿y zainstalowaæ w celu wstêpnej konfiguracji coWiki po
+pierwszej instalacji. Potem nale¿y go odinstalowaæ, jako ¿e
+pozostawienie plików instalacyjnych mog³oby byæ niebezpieczne.
+
 %prep
 %setup -q %{?_snap:-n %{name}-%{version}-interim-%{_snap}}
 %patch0 -p1
@@ -66,9 +82,14 @@ rm htdocs/setup/LICENSE # GPL
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir},/var/cache/%{name}}
 
-cp -a htdocs includes $RPM_BUILD_ROOT%{_appdir}
+cp -a htdocs includes misc $RPM_BUILD_ROOT%{_appdir}
 install core.conf-dist $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
+
+# for setup
+install LICENSE $RPM_BUILD_ROOT%{_appdir}/htdocs/setup
+install core.conf-dist $RPM_BUILD_ROOT%{_appdir}/includes/cowiki/core.conf-dist
+touch $RPM_BUILD_ROOT%{_appdir}/htdocs/install.seal
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -88,6 +109,18 @@ if [ "$1" = "0" ]; then
 	# nuke cache
 	# FIXME could suffer too many arguments error
 	rm -f /var/cache/%{name}/*
+fi
+
+%post setup
+chgrp http %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+chmod g+w %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+rm -f %{_appdir}/htdocs/install.seal
+
+%postun setup
+if [ "$1" = "0" ]; then
+	chgrp root %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+	chmod g-w %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+	touch %{_appdir}/htdocs/install.seal
 fi
 
 %triggerin -- apache1 >= 1.3.33-2
@@ -115,5 +148,30 @@ rm -f /var/lib/%{name}/*
 %attr(751,root,root) %dir %{_sysconfdir}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
-%{_appdir}
+
+%dir %{_appdir}
+%{_appdir}/misc
+%dir %{_appdir}/includes
+%dir %{_appdir}/includes/cowiki
+%{_appdir}/includes/cowiki/class
+%{_appdir}/includes/cowiki/locale
+%{_appdir}/includes/cowiki/plugin
+%{_appdir}/includes/cowiki/*.php
+%dir %{_appdir}/htdocs
+%{_appdir}/htdocs/img
+%{_appdir}/htdocs/tpl
+%{_appdir}/htdocs/*.txt
+%{_appdir}/htdocs/*.php
+%{_appdir}/htdocs/favicon.ico
+%{_appdir}/htdocs/include.path
+
 %dir %attr(770,root,http) /var/cache/%{name}
+
+# setup seal
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_appdir}/htdocs/install.seal
+
+%files setup
+%defattr(644,root,root,755)
+%{_appdir}/htdocs/setup
+%{_appdir}/htdocs/install.pending
+%{_appdir}/includes/cowiki/core.conf-dist
