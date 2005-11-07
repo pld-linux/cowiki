@@ -2,14 +2,14 @@
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
 # snapshot: DATE
-%define _snap 2005-06-18
+%define _snap 2005-11-07
 
 %if 0%{?_snap}
-%define _source http://snaps.cowiki.org/%{name}-%{version}-dev-%{_snap}.tar.gz
+%define _source http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
 %else
 %define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 7
+%define _rel 0.1
 
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
@@ -20,11 +20,11 @@ Epoch:		0
 License:	GPL
 Group:		Applications/WWW
 Source0:	%{_source}
-# Source0-md5:	377fac41be7d27675b2ffa4d7f256044
+# Source0-md5:	aea66d8526e1633b942ad2f6d3aa1110
 Patch0:		%{name}-FHS.patch
 URL:		http://cowiki.org/
 #BuildRequires:	rpmbuild(macros) >= 1.223
-Requires:	php >= 5.0.2
+Requires:	php >= 4:5.0.2
 Requires:	php-mysql
 Requires:	apache(mod_auth)
 BuildArch:	noarch
@@ -50,13 +50,13 @@ towarzysz±c± dokumentacjê XML burzy mózgów bez potrzeby koncentrowania
 siê na skomplikowanej sk³adni strukturalnej.
 
 %prep
-%setup -q %{?_snap:-n %{name}-%{version}-dev-%{_snap}}
+%setup -q %{?_snap:-n %{name}-%{version}-interim-%{_snap}}
 %patch0 -p1
 
 mv includes/cowiki/core.conf-dist .
-rm -f {htdocs,includes/cowiki}/.cvsignore
+rm {htdocs,includes/cowiki}/.cvsignore
 mv htdocs/.htaccess .
-rm -f htdocs/setup/LICENSE # GPL
+rm htdocs/setup/LICENSE # GPL
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -108,7 +108,7 @@ fi
 if [ "$1" = "0" ]; then
 	# nuke cache
 	# FIXME could suffer too many arguments error
-	rm -f /var/lib/%{name}/*
+	rm -f /var/cache/%{name}/*
 fi
 
 %triggerin -- apache1 >= 1.3.33-2
