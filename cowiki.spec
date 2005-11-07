@@ -9,7 +9,7 @@
 %else
 %define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
 %endif
-%define _rel 0.1
+%define _rel 0.2
 
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
@@ -108,10 +108,10 @@ rm -f /var/lib/%{name}/*
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog INSTALL* NEWS 
+%doc ChangeLog INSTALL* NEWS
 %doc README.IDIOM README.PLUGIN SKEL.PLUGIN
 %doc misc/database
-%dir %{_sysconfdir}
+%attr(751,root,root) %dir %{_sysconfdir}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
 %{_appdir}
