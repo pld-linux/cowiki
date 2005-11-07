@@ -21,7 +21,9 @@ License:	GPL
 Group:		Applications/WWW
 Source0:	%{_source}
 # Source0-md5:	aea66d8526e1633b942ad2f6d3aa1110
+Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
+Patch1:		%{name}-config.patch
 URL:		http://cowiki.org/
 #BuildRequires:	rpmbuild(macros) >= 1.223
 Requires:	php >= 4:5.0.2
@@ -52,6 +54,7 @@ siê na skomplikowanej sk³adni strukturalnej.
 %prep
 %setup -q %{?_snap:-n %{name}-%{version}-interim-%{_snap}}
 %patch0 -p1
+%patch1 -p1
 
 mv includes/cowiki/core.conf-dist .
 rm {htdocs,includes/cowiki}/.cvsignore
@@ -63,33 +66,8 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir},/var/cache/%{name}}
 
 cp -a htdocs includes $RPM_BUILD_ROOT%{_appdir}
-
-sed -e '
-    s,CHECK_INTERVAL = .*,CHECK_INTERVAL = "-1",
-    s,RETURN_PATH = .*,RETURN_PATH = "postmaster@localhost",
-    s,ABUSE_PATH = .*,ABUSE_PATH = "abuse@localhost",
-    s,ROOT_PASSWD = .*,ROOT_PASSWD = "XXX",
-    s,LOOKUP_DNS = .*,LOOKUP_DNS = off,
-    s,TEMP = .*,TEMP = "/var/cache/%{name}/",
-
-' core.conf-dist > $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
-echo -e '\n; vim: ft=dosini' >> $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
-
-# unfortunately cowiki works only as vhost root
-cat <<EOF >> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
-<Directory /usr/share/cowiki/htdocs>
-    Allow from all
-</Directory>
-
-<VirtualHost *:80>
-	ServerName cowiki
-	DocumentRoot /usr/share/cowiki/htdocs
-
-EOF
-sed -ne '/BEGIN/,/END/p' .htaccess >> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
-cat <<EOF >> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
-</VirtualHost>
-EOF
+install core.conf-dist $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
