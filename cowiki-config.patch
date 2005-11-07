@@ -1,0 +1,62 @@
+--- core.conf-dist	2005-09-12 23:32:39.000000000 +0300
++++ ./includes/cowiki/core.conf-dist	2005-11-07 20:36:01.000000000 +0200
+@@ -80,7 +80,7 @@
+     ; coWiki check for a new version? Valid values are values that can
+     ; be passed to the <http://www.php.net/strtotime> function. To disable
+     ; the check, enter -1 here.
+-    CHECK_INTERVAL = "2 weeks"
++    CHECK_INTERVAL = "-1"
+ 
+     ; DO NOT change this URI if not stated otherwise on the official
+     ; mailing list with a digitally signed email from the developers!
+@@ -103,7 +103,7 @@
+     ; will kick your ass to the moon in that case! The programmers of coWiki
+     ; ARE NOT your contact persons for your troubles with your admin or ISP!
+     ; Take care and be warned!
+-    RETURN_PATH = "your.bounce.email@example.com"
++    RETURN_PATH = "postmaster@localhost"
+ 
+     ; You have to be prepared to meet hostile and malicious guys, who are
+     ; going to receive emails from coWiki and complain then, even if they
+@@ -115,7 +115,7 @@
+     ; admin if you do not know what mail abusing is and how to act in these
+     ; cases. Abuse is very serious problem, you will have to take action
+     ; when you or your coWiki are affected.
+-    ABUSE_PATH = "your.abuse.email@example.com"
++    ABUSE_PATH = "abuse@localhost"
+ 
+ ; -------------------------------------------------------------------------
+ 
+@@ -174,7 +174,7 @@
+     ; - Blowfish encryption with a sixteen character salt starting with $2$
+     ; You may generate the crypted password with the "crypt" or "htpasswd"
+     ; commands or let it generate through http://your.cowiki/crypt.php
+-    ROOT_PASSWD = ""
++    ROOT_PASSWD = "XXX"
+ 
+     ; Grant root access to *all* users, disables/overrides all access
+     ; checks. WARNING: Any user will become *root* and will be able to
+@@ -216,7 +216,7 @@
+ 
+     ; Directory for temporary data. It MUST NOT be accessible by an user
+     ; agent, must be readable and writable for httpd or the PHP-uid.
+-    TEMP = "/tmp/"
++    TEMP = "/var/cache/cowiki/"
+ 
+     ; Your binaries directory. It MUST NOT be accessible by an user agent,
+     ; must be readable and writable for httpd or the PHP-uid. Skip this
+@@ -273,7 +273,7 @@
+     ; Enable resolving of the reverse DNS name of a remote address (IP).
+     ; Lookups may/will cause delays, turn it "off" if you encounter
+     ; speed problems with your DNS.
+-    LOOKUP_DNS = "on"
++    LOOKUP_DNS = off
+ 
+     ; Access mode bits umask. As this is a collaboration tool the umask
+     ; is set to "002" by default. If you are going to use this software
+@@ -376,3 +376,5 @@
+ 
+     ; Parameters for the referrer plugin
+     REFERRER_ENABLE = "on"
++
++; vim: ft=dosini
