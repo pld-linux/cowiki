@@ -28,6 +28,7 @@ URL:		http://cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.221
 Requires:	php >= 4:5.0.2
 Requires:	php-mysql
+Requires:	php-dom
 Requires:	apache(mod_auth)
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
