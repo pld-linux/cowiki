@@ -24,7 +24,7 @@ Source0:	%{_source}
 Patch0:		%{name}-FHS.patch
 URL:		http://cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.226
-Requires:	php >= 5.0.2
+Requires:	php >= 4:5.0.2
 Requires:	php-mysql
 Requires:	apache(mod_auth)
 BuildArch:	noarch
