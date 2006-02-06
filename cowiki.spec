@@ -2,13 +2,12 @@
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
 %define _snap 2006-02-06
-%define _rel 0.2
+%define _rel 0.3
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
 Version:	0.4.0
 Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
-Epoch:		0
 License:	GPL
 Group:		Applications/WWW
 Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
@@ -50,7 +49,7 @@ siê na skomplikowanej sk³adni strukturalnej.
 Summary:	coWiki setup package
 Summary(pl):	Pakiet do wstêpnej konfiguracji coWiki
 Group:		Applications/WWW
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description setup
 Install this package to configure initial coWiki installation. You
