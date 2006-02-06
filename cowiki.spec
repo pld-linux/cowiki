@@ -1,16 +1,8 @@
 # TODO
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
-# snapshot: DATE
-%define _snap 2005-11-07
-
-%if 0%{?_snap}
-%define _source http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
-%else
-%define _source http://www.cowiki.org/download/%{name}-%{version}.tar.gz
-%endif
-%define _rel 0.9
-
+%define _snap 2006-02-06
+%define _rel 0.2
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -19,22 +11,24 @@ Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
 Epoch:		0
 License:	GPL
 Group:		Applications/WWW
-Source0:	%{_source}
-# Source0-md5:	aea66d8526e1633b942ad2f6d3aa1110
+Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
+# Source0-md5:	522d3d73abc928516b1982f258633da5
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
 URL:		http://cowiki.org/
-BuildRequires:	rpmbuild(macros) >= 1.221
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	php >= 4:5.0.2
-Requires:	php-mysql
 Requires:	php-dom
-Requires:	apache(mod_auth)
+Requires:	php-mysql
+Requires:	webapps
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_appdir %{_datadir}/%{name}
-%define		_sysconfdir	/etc/%{name}
+%define		_webapps	/etc/webapps
+%define		_webapp		%{name}
+%define		_sysconfdir	%{_webapps}/%{_webapp}
+%define		_appdir		%{_datadir}/%{_webapp}
 
 %description
 coWiki is a sophisticated but easy to use web collaboration tool that
@@ -56,7 +50,7 @@ siê na skomplikowanej sk³adni strukturalnej.
 Summary:	coWiki setup package
 Summary(pl):	Pakiet do wstêpnej konfiguracji coWiki
 Group:		Applications/WWW
-PreReq:		%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description setup
 Install this package to configure initial coWiki installation. You
@@ -85,6 +79,7 @@ install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir},/var/cache/%{name}}
 cp -a htdocs includes misc $RPM_BUILD_ROOT%{_appdir}
 install core.conf-dist $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
 
 # for setup
 install LICENSE $RPM_BUILD_ROOT%{_appdir}/htdocs/setup
@@ -123,30 +118,63 @@ if [ "$1" = "0" ]; then
 	touch %{_appdir}/htdocs/install.seal
 fi
 
-%triggerin -- apache1 >= 1.3.33-2
-%apache_config_install -v 1 -c %{_sysconfdir}/apache.conf
+%triggerin -- apache1
+%webapp_register apache %{_webapp}
 
-%triggerun -- apache1 >= 1.3.33-2
-%apache_config_uninstall -v 1
+%triggerun -- apache1
+%webapp_unregister apache %{_webapp}
 
-%triggerin -- apache >= 2.0.0
-%apache_config_install -v 2 -c %{_sysconfdir}/apache.conf
+%triggerin -- apache < 2.2.0, apache-base
+%webapp_register httpd %{_webapp}
 
-%triggerun -- apache >= 2.0.0
-%apache_config_uninstall -v 2
+%triggerun -- apache < 2.2.0, apache-base
+%webapp_unregister httpd %{_webapp}
 
 # cache dir moved
 %triggerun -- %{name} < 0.4.0-0.20050618.3
 # FIXME could suffer too many arguments error
 rm -f /var/lib/%{name}/*
 
+%triggerpostun -- %{name} < 0.4.0-0.20060206.0.2
+# rescue app config
+if [ -f /etc/%{name}/core.conf.rpmsave ]; then
+	mv -f %{_sysconfdir}/core.conf{,.rpmnew}
+	mv -f /etc/%{name}/core.conf.rpmsave %{_sysconfdir}/core.conf
+fi
+# migrate from apache-config macros
+if [ -f /etc/%{name}/apache.conf.rpmsave ]; then
+	if [ -d /etc/apache/webapps.d ]; then
+		cp -f %{_sysconfdir}/apache.conf{,.rpmnew}
+		cp -f /etc/%{name}/apache.conf.rpmsave %{_sysconfdir}/apache.conf
+	fi
+
+	if [ -d /etc/httpd/webapps.d ]; then
+		cp -f %{_sysconfdir}/httpd.conf{,.rpmnew}
+		cp -f /etc/%{name}/apache.conf.rpmsave %{_sysconfdir}/httpd.conf
+	fi
+	rm -f /etc/%{name}/apache.conf.rpmsave
+fi
+
+# migrating from earlier apache-config?
+if [ -L /etc/apache/conf.d/99_%{name}.conf ]; then
+	rm -f /etc/apache/conf.d/99_%{name}.conf
+	/usr/sbin/webapp register apache %{_webapp}
+	%service -q apache reload
+fi
+if [ -L /etc/httpd/httpd.conf/99_%{name}.conf ]; then
+	rm -f /etc/httpd/httpd.conf/99_%{name}.conf
+	/usr/sbin/webapp register httpd %{_webapp}
+	%service -q httpd reload
+fi
+
 %files
 %defattr(644,root,root,755)
 %doc ChangeLog INSTALL* NEWS
 %doc README.IDIOM README.PLUGIN SKEL.PLUGIN
 %doc misc/database
-%attr(751,root,root) %dir %{_sysconfdir}
+%dir %attr(750,root,http) %{_sysconfdir}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
 
 %dir %{_appdir}
