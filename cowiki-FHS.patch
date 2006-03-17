@@ -5,7 +5,7 @@
  
          try {
 -            $sPath = realpath(getDirName(__FILE__).'../..') . '/core.conf';
-+            $sPath = '/etc/cowiki/core.conf';
++            $sPath = '/etc/webapps/cowiki/core.conf';
  
              $Conf = new Config();
              $aConf = $Conf->getIniConfigAsArray($sPath);
