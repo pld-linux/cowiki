@@ -1,8 +1,8 @@
 # TODO
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
-%define _snap 2006-02-06
-%define _rel 0.3
+%define _snap 2006-03-17
+%define _rel 0.1
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -11,11 +11,11 @@ Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
 License:	GPL
 Group:		Applications/WWW
 Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
-# Source0-md5:	522d3d73abc928516b1982f258633da5
+# Source0-md5:	2aaf6115460ca1674d6de381f07a4e68
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
-URL:		http://cowiki.org/
+URL:		http://www.cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	php >= 4:5.0.2
 Requires:	php-dom
