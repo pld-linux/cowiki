@@ -1,7 +1,7 @@
 # TODO
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 
-%define _snap 2006-03-17
+%define _snap 2006-04-17
 %define _rel 0.1
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
@@ -11,7 +11,7 @@ Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
 License:	GPL
 Group:		Applications/WWW
 Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
-# Source0-md5:	2aaf6115460ca1674d6de381f07a4e68
+# Source0-md5:	476a1a369fb3f42b90dce09c032ee6a8
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
