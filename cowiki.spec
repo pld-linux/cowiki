@@ -3,7 +3,7 @@
 #  - theoretically mysql,mysqli,pgsql,sqlite connectors are possible.
 
 %define _snap 2006-03-17
-%define _rel 0.5
+%define _rel 0.6
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -16,6 +16,7 @@ Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
+Patch2:		%{name}-https.patch
 URL:		http://www.cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	apache(mod_dir)
@@ -68,6 +69,7 @@ pozostawienie plików instalacyjnych mog³oby byæ niebezpieczne.
 %setup -q %{?_snap:-n %{name}-%{version}-interim-%{_snap}}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 mv includes/cowiki/core.conf-dist .
 rm {htdocs,includes/cowiki}/.cvsignore
