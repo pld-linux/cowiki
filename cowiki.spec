@@ -1,25 +1,28 @@
 # TODO
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
+#  - theoretically mysql,mysqli,pgsql,sqlite connectors are possible.
 
-%define _snap 2006-04-17
-%define _rel 0.1
+%define _snap 2006-03-17
+%define _rel 0.5
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
 Version:	0.4.0
-Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
+Release:	%{?_snap:1.%(echo %{_snap} | tr -d -).}%{_rel}
 License:	GPL
 Group:		Applications/WWW
 Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
-# Source0-md5:	476a1a369fb3f42b90dce09c032ee6a8
+# Source0-md5:	2aaf6115460ca1674d6de381f07a4e68
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
 URL:		http://www.cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.268
+Requires:	apache(mod_dir)
 Requires:	php >= 4:5.0.2
 Requires:	php-dom
-Requires:	php-mysql
+Requires:	php-mysqli
+Requires:	php-pcre
 Requires:	webapps
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -70,6 +73,12 @@ mv includes/cowiki/core.conf-dist .
 rm {htdocs,includes/cowiki}/.cvsignore
 mv htdocs/.htaccess .
 rm htdocs/setup/LICENSE # GPL
+
+cat <<'EOF' > misc/database/mysql-grant.sql
+# this schema will grant MySQL database access
+GRANT SELECT, INSERT, UPDATE, DELETE ON cowiki.* TO 'cowiki'@'localhost' IDENTIFIED BY 'password
+';
+EOF
 
 %install
 rm -rf $RPM_BUILD_ROOT
