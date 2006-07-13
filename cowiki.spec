@@ -3,7 +3,7 @@
 #  - theoretically mysql,mysqli,pgsql,sqlite connectors are possible.
 
 %define _snap 2006-03-17
-%define _rel 0.7
+%define _rel 0.8
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -83,14 +83,24 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON cowiki.* TO 'cowiki'@'localhost' IDENTIF
 ';
 EOF
 
+cat <<'EOF' > php.ini
+[PHP]
+; Whether to allow the treatment of URLs (like http:// or ftp://) as files.
+allow_url_fopen = On
+EOF
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_sysconfdir},/var/cache/%{name}}
+install -d $RPM_BUILD_ROOT/etc/php/apache{,2handler}.d
 
 cp -a htdocs includes misc $RPM_BUILD_ROOT%{_appdir}
 install core.conf-dist $RPM_BUILD_ROOT%{_sysconfdir}/core.conf
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
+
+cp -a php.ini $RPM_BUILD_ROOT/etc/php/apache.d/%{name}.ini
+cp -a php.ini $RPM_BUILD_ROOT/etc/php/apache2handler.d/%{name}.ini
 
 # for setup
 install LICENSE $RPM_BUILD_ROOT%{_appdir}/htdocs/setup
@@ -187,6 +197,8 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/core.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/php/apache.d/%{name}.ini
+%config(noreplace) %verify(not md5 mtime size) /etc/php/apache2handler.d/%{name}.ini
 
 %dir %{_appdir}
 %{_appdir}/misc
