@@ -1,0 +1,46 @@
+--- cowiki/htdocs/index.proxy.php~	2006-07-31 18:33:32.000000000 +0300
++++ cowiki/htdocs/index.proxy.php	2006-07-31 19:11:13.906758788 +0300
+@@ -69,7 +69,7 @@
+     // --------------------------------------------------------------------
+ 
+     // Load and set include path definition
+-    ini_set('include_path', @file_get_contents('./include.path'));
++    ini_set('include_path', '.:../includes/cowiki:../misc');
+ 
+     // --------------------------------------------------------------------
+ 
+--- cowiki/htdocs/admin.proxy.php~	2005-08-03 01:11:16.000000000 +0300
++++ cowiki/htdocs/admin.proxy.php	2006-07-31 19:11:13.910759047 +0300
+@@ -73,7 +73,7 @@
+     // --------------------------------------------------------------------
+ 
+     // Load and set include path definition
+-    ini_set('include_path', @file_get_contents('./include.path'));
++    ini_set('include_path', '.:../includes/cowiki:../misc');
+ 
+     // --------------------------------------------------------------------
+ 
+--- cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.StateHolder.php~	2005-05-17 00:13:06.000000000 +0300
++++ cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.StateHolder.php	2006-07-31 19:45:59.895859984 +0300
+@@ -57,7 +57,7 @@
+         // If include paths has not been loaded yet - load them once
+         if (!$this->hasPathsLoaded()) {
+ 
+-            $sPath = @file_get_contents(SETUP_PATH.'/../include.path');
++            $sPath = '.:../includes/cowiki:../misc';
+ 
+             // The original delimiter is ':', if the 'include.path' file
+             // has not been changed yet, but can be ';' after a change.
+--- cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFilePermissionChecker.php~	2005-05-17 01:17:54.000000000 +0300
++++ cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFilePermissionChecker.php	2006-07-31 19:49:26.410494239 +0300
+@@ -127,10 +127,6 @@
+             $aArr[] = $sHtDocs;
+         }
+ 
+-        if (!$this->canReadWrite($sHtDocs . '/include.path')) {
+-            $aArr[] = $sHtDocs . '/include.path';
+-        }
+-
+         if ($this->State->isUpdateSetup()) {
+             if (!$this->canReadWrite($sHtDocs . '/install.seal')) {
+                 $aArr[] = $sHtDocs . '/install.seal';
