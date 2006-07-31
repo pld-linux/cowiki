@@ -1,0 +1,11 @@
+--- cowiki/htdocs/setup/installer.proxy.php~	2005-08-03 01:14:34.000000000 +0300
++++ cowiki/htdocs/setup/installer.proxy.php	2006-07-31 19:33:41.826098077 +0300
+@@ -197,7 +197,7 @@
+         $Tpl->assign('TPL_SOFTWARE_RELEASE', COWIKI_RELEASE);
+         $Tpl->assign('TPL_SOFTWARE_HOME',    COWIKI_HOME);
+ 
+-        $Tpl->assign('TPL_CURRENT_YEAR',     date('Y'));
++        $Tpl->assign('TPL_CURRENT_YEAR',     @date('Y'));
+ 
+         // Set formular data
+         $Tpl->assign('TPL_FORM_ACTION', $_SERVER['PHP_SELF']);
