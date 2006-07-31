@@ -2,8 +2,8 @@
 #  - lighttpd integration possible <http://wiki.lighttpd.net/33.html>.
 #  - theoretically mysql,mysqli,pgsql,sqlite connectors are possible.
 
-%define _snap 2006-03-17
-%define _rel 0.8
+%define _snap 2006-05-08
+%define _rel 0.14
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -12,11 +12,14 @@ Release:	%{?_snap:1.%(echo %{_snap} | tr -d -).}%{_rel}
 License:	GPL
 Group:		Applications/WWW
 Source0:	http://snaps.cowiki.org/%{name}-%{version}-interim-%{_snap}.tar.gz
-# Source0-md5:	2aaf6115460ca1674d6de381f07a4e68
+# Source0-md5:	f2843189fc24c854414a3e23a4b9ac95
 Source1:	%{name}.conf
 Patch0:		%{name}-FHS.patch
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-https.patch
+Patch3:		%{name}-includepath.patch
+Patch4:		%{name}-tz.patch
+Patch5:		%{name}-webapps.patch
 URL:		http://www.cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	apache(mod_dir)
@@ -71,11 +74,15 @@ pozostawienie plików instalacyjnych mog³oby byæ niebezpieczne.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 mv includes/cowiki/core.conf-dist .
 rm {htdocs,includes/cowiki}/.cvsignore
 mv htdocs/.htaccess .
 rm htdocs/setup/LICENSE # GPL
+rm -f htdocs/include.path
 
 cat <<'EOF' > misc/database/mysql-grant.sql
 # this schema will grant MySQL database access
@@ -128,14 +135,14 @@ if [ "$1" = "0" ]; then
 fi
 
 %post setup
-chgrp http %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
-chmod g+w %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+chgrp http %{_appdir}/{htdocs,includes/cowiki}
+chmod g+w %{_appdir}/{htdocs,includes/cowiki}
 rm -f %{_appdir}/htdocs/install.seal
 
 %postun setup
 if [ "$1" = "0" ]; then
-	chgrp root %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
-	chmod g-w %{_appdir}/{htdocs/include.path,htdocs,includes/cowiki}
+	chgrp root %{_appdir}/{htdocs,includes/cowiki}
+	chmod g-w %{_appdir}/{htdocs,includes/cowiki}
 	touch %{_appdir}/htdocs/install.seal
 fi
 
@@ -150,43 +157,6 @@ fi
 
 %triggerun -- apache < 2.2.0, apache-base
 %webapp_unregister httpd %{_webapp}
-
-# cache dir moved
-%triggerun -- %{name} < 0.4.0-0.20050618.3
-# FIXME could suffer too many arguments error
-rm -f /var/lib/%{name}/*
-
-%triggerpostun -- %{name} < 0.4.0-0.20060206.0.2
-# rescue app config
-if [ -f /etc/%{name}/core.conf.rpmsave ]; then
-	mv -f %{_sysconfdir}/core.conf{,.rpmnew}
-	mv -f /etc/%{name}/core.conf.rpmsave %{_sysconfdir}/core.conf
-fi
-# migrate from apache-config macros
-if [ -f /etc/%{name}/apache.conf.rpmsave ]; then
-	if [ -d /etc/apache/webapps.d ]; then
-		cp -f %{_sysconfdir}/apache.conf{,.rpmnew}
-		cp -f /etc/%{name}/apache.conf.rpmsave %{_sysconfdir}/apache.conf
-	fi
-
-	if [ -d /etc/httpd/webapps.d ]; then
-		cp -f %{_sysconfdir}/httpd.conf{,.rpmnew}
-		cp -f /etc/%{name}/apache.conf.rpmsave %{_sysconfdir}/httpd.conf
-	fi
-	rm -f /etc/%{name}/apache.conf.rpmsave
-fi
-
-# migrating from earlier apache-config?
-if [ -L /etc/apache/conf.d/99_%{name}.conf ]; then
-	rm -f /etc/apache/conf.d/99_%{name}.conf
-	/usr/sbin/webapp register apache %{_webapp}
-	%service -q apache reload
-fi
-if [ -L /etc/httpd/httpd.conf/99_%{name}.conf ]; then
-	rm -f /etc/httpd/httpd.conf/99_%{name}.conf
-	/usr/sbin/webapp register httpd %{_webapp}
-	%service -q httpd reload
-fi
 
 %files
 %defattr(644,root,root,755)
@@ -214,7 +184,6 @@ fi
 %{_appdir}/htdocs/*.txt
 %{_appdir}/htdocs/*.php
 %{_appdir}/htdocs/favicon.ico
-%{_appdir}/htdocs/include.path
 
 %dir %attr(770,root,http) /var/cache/%{name}
 
