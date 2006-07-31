@@ -1,0 +1,24 @@
+--- cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFilePermissionChecker.php~	2005-05-17 01:17:54.000000000 +0300
++++ cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFilePermissionChecker.php	2006-07-31 19:58:12.642301768 +0300
+@@ -151,8 +147,8 @@
+         }
+ 
+         if ($this->State->isUpdateSetup()) {
+-            if (!$this->canReadWrite($sIncludes . '/core.conf')) {
+-                $aArr[] = $sIncludes . '/core.conf';
++            if (!$this->canReadWrite('/etc/webapps/cowiki/core.conf')) {
++                $aArr[] = '/etc/webapps/cowiki/core.conf';
+             }
+         }
+ 
+--- cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFinish.php~	2005-09-12 23:26:50.000000000 +0300
++++ cowiki-0.4.0-interim-2006-05-08/htdocs/setup/class/task/class.TaskFinish.php	2006-07-31 19:59:25.373933577 +0300
+@@ -206,7 +206,7 @@
+         // ---
+ 
+         // Store the configuration file.
+-        $sConfigFile = $this->State->getIncludesPath() . '/core.conf';
++        $sConfigFile = '/etc/webapps/cowiki/core.conf';
+         $Conf->store($sConfigFile);
+     }
+ 
