@@ -3,7 +3,7 @@
 #  - theoretically mysql,mysqli,pgsql,sqlite connectors are possible.
 
 %define _snap 2006-05-08
-%define _rel 0.14
+%define _rel 0.17
 Summary:	Web collaboration tool
 Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
 Name:		cowiki
@@ -24,11 +24,11 @@ URL:		http://www.cowiki.org/
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	apache(mod_dir)
 Requires:	diffutils
-Requires:	php >= 4:5.0.2
-Requires:	php-dom
-Requires:	php-mysqli
-Requires:	php-pcre
+Requires:	php(dom)
+Requires:	php(mysqli)
+Requires:	php(pcre)
 Requires:	webapps
+Requires:	webserver(php) >= 5.0.2
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
