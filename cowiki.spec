@@ -4,7 +4,7 @@
 %define _snap 2006-02-06
 %define _rel 0.3
 Summary:	Web collaboration tool
-Summary(pl):	Narzêdzie do wspó³pracy i wspó³tworzenia w sieci
+Summary(pl.UTF-8):   NarzÄ™dzie do wspÃ³Å‚pracy i wspÃ³Å‚tworzenia w sieci
 Name:		cowiki
 Version:	0.4.0
 Release:	%{?_snap:0.%(echo %{_snap} | tr -d -).}%{_rel}
@@ -37,17 +37,17 @@ in their HTML browser. You may evolve ideas and gain a concomitant XML
 documentation of your brainstorming without having to concentrate on
 complicated structural syntaxes.
 
-%description -l pl
-coWiki to wyszukane, ale ³atwe w u¿yciu narzêdzie do pracy zespo³owej
-przez WWW pomagaj±ce wspó³pracownikom tworzyæ i organizowaæ dokumenty
-WWW, weblogi, bazy wiedzy lub dowolne inne struktury dokumentów
-bezpo¶rednio w przegl±darce HTML. Mo¿na rozwijaæ idee i otrzymywaæ
-towarzysz±c± dokumentacjê XML burzy mózgów bez potrzeby koncentrowania
-siê na skomplikowanej sk³adni strukturalnej.
+%description -l pl.UTF-8
+coWiki to wyszukane, ale Å‚atwe w uÅ¼yciu narzÄ™dzie do pracy zespoÅ‚owej
+przez WWW pomagajÄ…ce wspÃ³Å‚pracownikom tworzyÄ‡ i organizowaÄ‡ dokumenty
+WWW, weblogi, bazy wiedzy lub dowolne inne struktury dokumentÃ³w
+bezpoÅ›rednio w przeglÄ…darce HTML. MoÅ¼na rozwijaÄ‡ idee i otrzymywaÄ‡
+towarzyszÄ…cÄ… dokumentacjÄ™ XML burzy mÃ³zgÃ³w bez potrzeby koncentrowania
+siÄ™ na skomplikowanej skÅ‚adni strukturalnej.
 
 %package setup
 Summary:	coWiki setup package
-Summary(pl):	Pakiet do wstêpnej konfiguracji coWiki
+Summary(pl.UTF-8):   Pakiet do wstÄ™pnej konfiguracji coWiki
 Group:		Applications/WWW
 Requires:	%{name} = %{version}-%{release}
 
@@ -56,10 +56,10 @@ Install this package to configure initial coWiki installation. You
 should uninstall this package when you're done, as it considered
 insecure to keep the setup files in place.
 
-%description setup -l pl
-Ten pakiet nale¿y zainstalowaæ w celu wstêpnej konfiguracji coWiki po
-pierwszej instalacji. Potem nale¿y go odinstalowaæ, jako ¿e
-pozostawienie plików instalacyjnych mog³oby byæ niebezpieczne.
+%description setup -l pl.UTF-8
+Ten pakiet naleÅ¼y zainstalowaÄ‡ w celu wstÄ™pnej konfiguracji coWiki po
+pierwszej instalacji. Potem naleÅ¼y go odinstalowaÄ‡, jako Å¼e
+pozostawienie plikÃ³w instalacyjnych mogÅ‚oby byÄ‡ niebezpieczne.
 
 %prep
 %setup -q %{?_snap:-n %{name}-%{version}-interim-%{_snap}}
