@@ -5,7 +5,7 @@
 %define _snap 2006-05-08
 %define _rel 0.17
 Summary:	Web collaboration tool
-Summary(pl.UTF-8):   Narzędzie do współpracy i współtworzenia w sieci
+Summary(pl.UTF-8):	Narzędzie do współpracy i współtworzenia w sieci
 Name:		cowiki
 Version:	0.4.0
 Release:	%{?_snap:1.%(echo %{_snap} | tr -d -).}%{_rel}
@@ -55,7 +55,7 @@ się na skomplikowanej składni strukturalnej.
 
 %package setup
 Summary:	coWiki setup package
-Summary(pl.UTF-8):   Pakiet do wstępnej konfiguracji coWiki
+Summary(pl.UTF-8):	Pakiet do wstępnej konfiguracji coWiki
 Group:		Applications/WWW
 Requires:	%{name} = %{version}-%{release}
 
